@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitconnect-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitconnect-backend
+  template:
+    metadata:
+      labels:
+        app: gitconnect-backend
+    spec:
+      containers:
+        - name: backend
+          image: victormdevops/gitconnect-backend:latest
+          ports:
+            - containerPort: 8080 # ✅ matches ConfigMap PORT
+          envFrom:
+            - secretRef:
+                name: backend-secrets # ✅ load DATABASE_URL + JWT_SECRET
+            - configMapRef:
+                name: backend-config # ✅ load PORT + GIN_MODE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service # ✅ matches frontend Nginx upstream
+spec:
+  selector:
+    app: gitconnect-backend
+  ports:
+    - port: 8080 # ✅ service port
+      targetPort: 8080 # ✅ forwards to containerPort
+
