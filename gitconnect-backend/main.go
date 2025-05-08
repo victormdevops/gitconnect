@@ -54,6 +54,14 @@ func main() {
 	routes.PostRoutes(router)
 	routes.ProfileRoutes(router)
 
+  // Add this line before swagger route
+router.GET("/health", func(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "status": "ok",
+    })
+})
+
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	port := os.Getenv("PORT")
