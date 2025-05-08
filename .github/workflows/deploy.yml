@@ -3,14 +3,14 @@ name: CI/CD Pipeline
 on:
   push:
     paths:
-      - "frontend/**"
-      - "backend/**"
+      - "gitconnect-frontend/**"
+      - "gitconnect-backend/**"
       - ".github/workflows/deploy.yml"
       - "*.yml"
   pull_request:
     paths:
-      - "frontend/**"
-      - "backend/**"
+      - "gitconnect-frontend/**"
+      - "gitconnect-backend/**"
       - "*.yml"
 
 jobs:
@@ -32,13 +32,13 @@ jobs:
       # Build & push backend
       - name: Build & push backend
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/gitconnect-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gitconnect-backend:latest ./gitconnect-backend
           docker push ${{ secrets.DOCKER_USERNAME }}/gitconnect-backend:latest
 
       # Build & push frontend
       - name: Build & push frontend
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/gitconnect-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gitconnect-frontend:latest ./gitconnect-frontend
           docker push ${{ secrets.DOCKER_USERNAME }}/gitconnect-frontend:latest
 
       # Setup kubectl
@@ -47,10 +47,11 @@ jobs:
         with:
           version: v1.26.0
 
-      # Deploy to Kubernetes (all *.yml in root)
+      # Deploy to Kubernetes (all *.yml in root + subfolders)
       - name: Deploy manifests
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
           echo "$KUBE_CONFIG" | base64 -d > $HOME/.kube/config
           kubectl apply -f .
+
