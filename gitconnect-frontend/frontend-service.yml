@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitconnect-frontend
+spec:
+  selector:
+    app: gitconnect-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort   # 👈 makes frontend reachable externally
