@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - ".github/workflows/deploy.yml"
+      - "*.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "*.yml"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # Log in to DockerHub
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build & push backend
+      - name: Build & push backend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gitconnect-backend:latest ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/gitconnect-backend:latest
+
+      # Build & push frontend
+      - name: Build & push frontend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gitconnect-frontend:latest ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/gitconnect-frontend:latest
+
+      # Setup kubectl
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.26.0
+
+      # Deploy to Kubernetes (all *.yml in root)
+      - name: Deploy manifests
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          echo "$KUBE_CONFIG" | base64 -d > $HOME/.kube/config
+          kubectl apply -f .
