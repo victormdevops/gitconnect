@@ -45,7 +45,7 @@ Frontend (React) Backend (Node)
 
 ### Kubectl Pods
 
-![docker ps](screenshots/Pods.png)
+![docker ps](screenshots/pods.png)
 
 ### Kubectl Services
 
