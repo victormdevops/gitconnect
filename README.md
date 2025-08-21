@@ -33,7 +33,9 @@ GitHub Actions (CI/CD)
 |
 DockerHub Registry
 |
-------------------
+
+---
+
 | |
 Frontend (React) Backend (Node)
 | |
@@ -50,6 +52,10 @@ Frontend (React) Backend (Node)
 ### Kubectl Services
 
 ![docker ps](screenshots/svc.png)
+
+### Kubectl Monitoring
+
+![docker ps](screenshots/mon.png)
 
 ### Kubectl logs
 
@@ -91,7 +97,7 @@ Frontend (React) Backend (Node)
 
 This project demonstrates:
 
-- Multi-service containerization with **Docker** and **Docker Compose**
+- Multi-service containerization with **Docker**
 - **Infrastructure as Code** with Kubernetes manifests
 - Automated **CI/CD** with GitHub Actions
 - Secure secret and config management using Kubernetes **Secret** and **ConfigMap**
